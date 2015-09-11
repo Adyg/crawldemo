@@ -1,0 +1,27 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define :crawldemo_vm do |crawldemo_config|
+    # Every Vagrant virtual environment requires a box to build off of.
+    crawldemo_config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
+    crawldemo_config.vm.hostname = "crawldemo.placeholder.com"
+
+    # Forward a port from the guest to the host, which allows for outside
+    # computers to access the VM, whereas host only networking does not.
+    crawldemo_config.vm.network :forwarded_port, host: 9171, guest: 8001	
+
+    crawldemo_config.vm.synced_folder "../", "/vagrant", id: "1",
+          mount_options: ["dmode=775", "fmode=764"]
+  
+    crawldemo_config.vm.provision :shell do |shell|
+      shell.path = "shell/main.sh"
+    end
+
+    crawldemo_config.vm.provision :puppet do |puppet|
+      puppet.manifests_path = 'puppet/manifests'
+      puppet.manifest_file  = "default.pp"
+      puppet.module_path    = ['puppet/modules', 'puppet/modules-contrib']
+    end
+
+  end
+end
+

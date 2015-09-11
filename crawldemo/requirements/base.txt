@@ -1,0 +1,16 @@
+Django==1.8.1
+django-braces==1.8.0
+django-model-utils==2.1.1
+psycopg2==2.6
+feedparser
+django-celery==3.1.16
+django-compressor==1.5
+beautifulsoup4==4.3.2
+Pillow==2.8.1
+sorl-thumbnail==12.2
+dj-static==0.0.6
+django-pipeline==1.5.0
+boto==2.38.0
+django-storages==1.1.8
+dj_database_url==0.3.0
+django-crispy-forms==1.4.0

@@ -1,0 +1,15 @@
+# Puppetfile
+# Configuration for librarian-puppet. For example:
+# 
+forge "http://forge.puppetlabs.com"
+mod "apt",
+   :git => "git://github.com/puppetlabs/puppetlabs-apt.git"
+ 
+mod "stdlib",
+  :git => "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+
+mod "concat",
+  :git => "git://github.com/puppetlabs/puppetlabs-concat.git"
+
+mod "postgresql",
+  :git => "git://github.com/puppetlabs/puppetlabs-postgresql.git"
