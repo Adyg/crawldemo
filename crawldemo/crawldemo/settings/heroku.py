@@ -13,21 +13,6 @@ import dj_database_url
 #from S3 import CallingFormat
 from boto.s3.connection import OrdinaryCallingFormat
 
-# Normally you should not import ANYTHING from Django directly
-# into your settings, but ImproperlyConfigured is an exception.
-from django.core.exceptions import ImproperlyConfigured
-
-
-def get_env_setting(setting, default_value=False):
-    """ Get the environment setting or return exception """
-    try:
-        return environ[setting]
-    except KeyError:
-        if default_value:
-            return default_value
-        else:
-            error_msg = "Set the %s env variable" % setting
-            raise ImproperlyConfigured(error_msg)
 
 ########## HOST CONFIGURATION
 # See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production

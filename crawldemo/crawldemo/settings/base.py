@@ -1,9 +1,24 @@
 """Common settings and globals."""
 
-
+from os import environ
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 
+# Normally you should not import ANYTHING from Django directly
+# into your settings, but ImproperlyConfigured is an exception.
+from django.core.exceptions import ImproperlyConfigured
+
+
+def get_env_setting(setting, default_value=False):
+    """ Get the environment setting or return exception """
+    try:
+        return environ[setting]
+    except KeyError:
+        if default_value:
+            return default_value
+        else:
+            error_msg = "Set the %s env variable" % setting
+            raise ImproperlyConfigured(error_msg)
 
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
@@ -253,3 +268,5 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 
 # Sorl
 THUMBNAIL_DEBUG = False
+
+DIFFBOT_TOKEN = get_env_setting('DIFFBOT_TOKEN')

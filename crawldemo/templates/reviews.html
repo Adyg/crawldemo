@@ -1,0 +1,24 @@
+{% for reviews_data in reviews %}
+    {% for ignore,review in reviews_data.items %}
+        <div class="review">
+            <p><span>Date:</span> {{review.d}}</p>
+            <p><span>Stars:</span> {{review.r}}</p>
+            <p><span>Title:</span> {{review.h}}</p>
+            <p><span>By:</span> {{review.n}}</p>
+            <p><span>Review:</span> {{review.p}}</p>
+            <p><span>Location:</span> {{review.w}}</p>
+            <div class="misc">
+                <span>Misc:</span>
+                {% for misc in review.g %}
+                <p>
+                    <span>{{misc.n}}:</span> 
+                    {% for misc_desc in misc.v %}
+                        {{misc_desc}},
+                    {% endfor %}
+                </p>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% endfor %}
+{% endfor %}

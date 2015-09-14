@@ -2,3 +2,13 @@
 body {
     width: 100%;
 }
+
+.review {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+}
+
+.review span {
+    font-weight: bold;
+}

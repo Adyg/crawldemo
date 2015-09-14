@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+  <form action="" method="POST">
+    <label for="url">Crawl URL</label>
+    <input id="url" type="text" name="url" value="{{url}}" />
+    <input type="submit" value="Crawl" />
+  </form>
+
+  <div class="product">
+    {% if product %}
+      <h1>Product data retrieved</h1>
+      <ul>
+        <li>Title: {{product.title}}</li>
+        <li>
+          Specs
+            <ul>
+              {% for label, spec in product.specs.items %}
+                <li>{{label}}: {{spec}}</li>
+              {% endfor %}
+            </ul>
+        </li>
+
+        {% if product.images %}
+        <li>
+        Images:
+          {% for image in product.images %}
+            <img src="{{image.url}}" />
+          {% endfor %}
+        </li>
+        {% endif %}
+
+        {% if product.offerPrice %}
+          <li>Price: {{product.offerPrice}}</li>
+        {% endif %}
+
+      </ul>
+
+    <div class="reviews">
+      <h2>Reviews</h2>
+      <div class="reviews-wrap">
+        
+      </div>
+      <a href="{% url 'reviews' pid=product_id page=0 %}" class="more-reviews">Click here to retrieve reviews</a>
+    </div>
+    {% endif %}
+  </div>
+  <script type="text/javascript">
+    var pid = "{{product_id}}";
+  </script>
+{% endblock content %}
