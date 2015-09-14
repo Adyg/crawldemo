@@ -23,7 +23,8 @@ def home(request):
         print json_result
         data['product'] = json_result['objects'][0]
         product_id_bits = data['url'].split('productId=')
-        data['product_id'] = product_id_bits[1]
+        product_id_bits = product_id_bits[1].split('&')
+        data['product_id'] = product_id_bits[0]
 
 
     return render(request, 'home.html', data)
