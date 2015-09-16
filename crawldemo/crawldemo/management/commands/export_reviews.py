@@ -4,16 +4,22 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import demjson
+import datetime
 
 import diffbot
 
 from django.core.management.base import BaseCommand, CommandError
 
+BASE_PATH = '/tmp/toysrus'
 
 class Command(BaseCommand):
+
     help = 'Export reviews to json. Call it with `python manage.py export_reviews 123 2342 45345`'
-    
+        
     def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('format', type=str)
+
         # Positional arguments
         parser.add_argument('pid', nargs='+', type=str)
 
@@ -22,6 +28,9 @@ class Command(BaseCommand):
         # make sure file option is present
         if options['pid'] == None :
             raise CommandError("Option `--pid=...` must be specified.")
+
+        if options['format'] == None :
+            raise CommandError("Option `--format=...` must be specified (json or xml).")
 
         pids = options['pid']
 
@@ -68,7 +77,7 @@ class Command(BaseCommand):
             base_url = 'http://www.toysrus.com/pwr/content/%s/%s-en_US-%s-reviews.js'
             done = False
             decoded_data = []
-            json_data = []
+            exportable_data = []
             it = 0
             while not done:
                 review_page_url = base_url % (s, pid, page)
@@ -88,14 +97,15 @@ class Command(BaseCommand):
                     decoded_data = demjson.decode(review_data)
                     for reviews in decoded_data:
                         review = reviews['r']
+
                         it = it + 1
-                        json_data.append(
+                        exportable_data.append(
                             {
                                 'sku': sku,
                                 'title': review['h'],
                                 'rating': review['r'],
                                 'text': review['p'],
-                                'submissionTime': review['d'],
+                                'submissionTime': review['db'],
                                 'displayName': review['n'],
                                 'externalId': review['id'],
                                 'emailAddress': it,
@@ -106,10 +116,50 @@ class Command(BaseCommand):
                     done = True
                 page = page + 1
 
-            base_path = '/tmp/toysrus'
+            export_to_file(options['format'], exportable_data, pid)
 
-            file_path = '%s/%s.json' % (base_path, pid) 
-            file_obj = open(file_path, 'w')
-            file_obj.write(json.dumps(json_data))
-            file_obj.close()
 
+def export_to_file(format, exportable_data, pid):
+    if format == 'json':
+        export_to_json(exportable_data, pid)
+
+        return 
+
+    export_to_xml(exportable_data, pid)
+
+
+def export_to_json(data, pid):
+    file_path = '%s/%s.json' % (BASE_PATH, pid)
+    file_obj = open(file_path, 'w')
+    file_obj.write(json.dumps(data))
+    file_obj.close()
+
+
+def export_to_xml(data, pid):
+    import xml.etree.cElementTree as ET
+
+    reviewsFeed = ET.Element("reviewsFeed")
+    reviews = ET.SubElement(reviewsFeed, "reviews")
+    it = 1
+    for review_data in data:
+        review = ET.SubElement(reviews, "review")
+        raw_date = datetime.datetime.strptime(review_data['submissionTime'], '%Y-%m-%dT%H:%M:%S')
+        formatted_date = raw_date.strftime('%d/%m/%Y %H:%M:%S -0500')
+
+
+        ET.SubElement(review, "sku").text = review_data['sku']
+        ET.SubElement(review, "title").text = review_data['title']
+        ET.SubElement(review, "text").text = review_data['text']
+        ET.SubElement(review, "submissionTime").text = formatted_date
+        #int not serializable 
+        ET.SubElement(review, "rating").text = str(review_data['rating'])
+        
+        user = ET.SubElement(review, "user")
+
+        ET.SubElement(user, "displayName").text = review_data['displayName']
+        ET.SubElement(user, "emailAddress").text = str(it)
+
+
+    file_path = '%s/%s.xml' % (BASE_PATH, pid)
+    tree = ET.ElementTree(reviewsFeed)
+    tree.write(file_path)
