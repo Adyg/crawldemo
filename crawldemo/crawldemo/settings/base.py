@@ -221,7 +221,9 @@ THIRD_PARTY_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    'crawldemo',
 )
+
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS 
@@ -269,4 +271,4 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 # Sorl
 THUMBNAIL_DEBUG = False
 
-DIFFBOT_TOKEN = get_env_setting('DIFFBOT_TOKEN')
+DIFFBOT_TOKEN = get_env_setting('DIFFBOT_TOKEN', 'a4328c8791c5aa8164f55078a4f65263')
