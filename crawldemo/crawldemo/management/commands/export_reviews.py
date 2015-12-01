@@ -91,7 +91,8 @@ class Command(BaseCommand):
                         review_data_lines.append(line)
                     review_data_raw = ''.join(review_data_lines)
 
-                    review_data_bits = review_data_raw.split(' = ')
+                    # split at the first '=' char
+                    review_data_bits = review_data_raw.split(' = ', 1)
                     review_data = review_data_bits[1]
                     review_data = review_data.replace(';', '')
                     decoded_data = demjson.decode(review_data)
